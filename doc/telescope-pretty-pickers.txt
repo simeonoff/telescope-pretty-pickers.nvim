@@ -1,0 +1,203 @@
+*telescope-pretty-pickers.txt*  Beautifully formatted pickers for telescope.nvim
+
+==============================================================================
+CONTENTS                                    *telescope-pretty-pickers*
+
+    1. Introduction ................ |telescope-pretty-pickers-introduction|
+    2. Requirements ................ |telescope-pretty-pickers-requirements|
+    3. Setup ....................... |telescope-pretty-pickers-setup|
+    4. Usage ....................... |telescope-pretty-pickers-usage|
+        4.1 File Pickers .......... |telescope-pretty-pickers-files|
+        4.2 Grep Pickers .......... |telescope-pretty-pickers-grep|
+        4.3 LSP Pickers ........... |telescope-pretty-pickers-lsp|
+        4.4 Buffer Picker ......... |telescope-pretty-pickers-buffers|
+        4.5 Grapple Picker ........ |telescope-pretty-pickers-grapple|
+    5. Configuration ............... |telescope-pretty-pickers-configuration|
+    6. Example ..................... |telescope-pretty-pickers-example|
+
+==============================================================================
+1. INTRODUCTION                           *telescope-pretty-pickers-introduction*
+
+telescope-pretty-pickers.nvim is an extension for telescope.nvim that provides
+beautifully formatted pickers with improved display of results.
+
+Note: This extension is in initial development and has primarily been created
+for personal use.
+
+==============================================================================
+2. REQUIREMENTS                           *telescope-pretty-pickers-requirements*
+
+The following plugins are required:
+
+- telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)
+- plenary.nvim (https://github.com/nvim-lua/plenary.nvim)
+- nvim-web-devicons (https://github.com/nvim-tree/nvim-web-devicons)
+- grapple.nvim (https://github.com/cbochs/grapple.nvim) (optional, for grapple picker)
+
+==============================================================================
+3. SETUP                                           *telescope-pretty-pickers-setup*
+
+First, install the plugin with your package manager.
+
+With lazy.nvim:
+>lua
+    return {
+      'nvim-telescope/telescope.nvim',
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+        'nvim-tree/nvim-web-devicons',
+        'cbochs/grapple.nvim',
+        'simeonoff/telescope-pretty-pickers.nvim',
+      },
+      config = function()
+        local telescope = require('telescope')
+        
+        telescope.setup({
+          -- your telescope config here
+        })
+        
+        -- Load the extension
+        telescope.load_extension('pretty_pickers')
+      end,
+    }
+<
+
+==============================================================================
+4. USAGE                                           *telescope-pretty-pickers-usage*
+
+4.1 File Pickers                                 *telescope-pretty-pickers-files*
+
+Beautifully formatted file pickers with better path/filename separation:
+>lua
+    -- Find files with pretty formatting
+    require('telescope').extensions.pretty_pickers.files({
+      picker = 'find_files', -- Can be 'find_files', 'git_files', or 'oldfiles'
+      options = { -- Standard telescope options
+        prompt_title = 'Project Files',
+        cwd = vim.fn.getcwd(),
+      },
+    })
+<
+
+4.2 Grep Pickers                                 *telescope-pretty-pickers-grep*
+
+Enhanced grep results with easier-to-read file locations:
+>lua
+    -- Search with live_grep
+    require('telescope').extensions.pretty_pickers.grep({
+      picker = 'live_grep', -- Can be 'live_grep' or 'grep_string'
+      options = { -- Standard telescope options
+        prompt_title = 'Search Text',
+      },
+    })
+<
+
+4.3 LSP Pickers                                   *telescope-pretty-pickers-lsp*
+
+Nicely formatted LSP symbol pickers with proper icons:
+>lua
+    -- Document symbols
+    require('telescope').extensions.pretty_pickers.document_symbols({
+      prompt_title = 'Document Symbols',
+    })
+
+    -- Workspace symbols
+    require('telescope').extensions.pretty_pickers.workspace_symbols({
+      prompt_title = 'Workspace Symbols',
+    })
+
+    -- LSP references
+    require('telescope').extensions.pretty_pickers.lsp_references({
+      prompt_title = 'LSP References',
+    })
+<
+
+4.4 Buffer Picker                             *telescope-pretty-pickers-buffers*
+
+Better buffer display with clear indicators:
+>lua
+    -- List buffers with pretty formatting
+    require('telescope').extensions.pretty_pickers.buffers({
+      prompt_title = 'Buffers',
+    })
+<
+
+4.5 Grapple Picker                             *telescope-pretty-pickers-grapple*
+
+Integration with grapple.nvim for tag management:
+>lua
+    -- Pick from Grapple tags
+    require('telescope').extensions.pretty_pickers.grapple({
+      prompt_title = 'Grapple Tags',
+    })
+<
+
+==============================================================================
+5. CONFIGURATION                         *telescope-pretty-pickers-configuration*
+
+You can configure telescope-pretty-pickers in the telescope setup:
+
+>lua
+    require('telescope').setup({
+      extensions = {
+        pretty_pickers = {
+          -- Default options for all pretty pickers
+          disable_coordinates = false, -- Set to true to hide line:column information in grep results
+          file_encoding = nil, -- Set to specify file encoding for proper text display (e.g., 'utf8', 'latin1')
+        }
+      }
+    })
+<
+
+==============================================================================
+6. EXAMPLE                                     *telescope-pretty-pickers-example*
+
+A more complete example based on a real configuration:
+
+>lua
+    local telescope = require('telescope')
+    local utils = require('utils') -- A utility module with get_root() function
+
+    -- Custom picker functions
+    local recent_files = function()
+      telescope.extensions.pretty_pickers.files({
+        picker = 'oldfiles',
+        options = {
+          prompt_title = 'Recent Files',
+          cwd = utils.get_root(),
+          cwd_only = true,
+        },
+      })
+    end
+
+    local project_files = function()
+      local opts = {}
+
+      if vim.uv.fs_stat('.git') then
+        opts.show_untracked = true
+        opts.prompt_title = 'Git Files'
+
+        telescope.extensions.pretty_pickers.files({
+          picker = 'git_files',
+          options = opts,
+        })
+      else
+        local client = vim.lsp.get_clients()[1]
+
+        if client then opts.cwd = client.config.root_dir end
+
+        telescope.extensions.pretty_pickers.files({
+          prompt_title = 'Project Files',
+          picker = 'find_files',
+          options = opts,
+        })
+      end
+    end
+
+    -- Keymaps
+    vim.keymap.set('n', '<leader>f', project_files, { desc = 'Find files' })
+    vim.keymap.set('n', '<leader>r', recent_files, { desc = 'Recent files' })
+<
+
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
