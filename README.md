@@ -18,8 +18,6 @@ Install with your favorite package manager:
 
 ### Lazy
 
-When using Lazy.nvim, it's important to include `enabled = true` in your telescope-pretty-pickers config to ensure it loads correctly:
-
 ```lua
 return {
   'nvim-telescope/telescope.nvim',
@@ -27,7 +25,6 @@ return {
     'nvim-lua/plenary.nvim',
     {
       'simeonoff/telescope-pretty-pickers.nvim',
-      enabled = true,  -- This is important to ensure the extension loads correctly
       dependencies = {
         'nvim-tree/nvim-web-devicons',
         'cbochs/grapple.nvim', -- Optional, only needed for grapple picker

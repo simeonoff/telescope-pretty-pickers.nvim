@@ -48,7 +48,6 @@ With lazy.nvim:
         'nvim-telescope/telescope-fzf-native.nvim',
         {
           'simeonoff/telescope-pretty-pickers.nvim',
-          enabled = true,  -- This is important for the extension to load correctly
           dependencies = {
             'nvim-tree/nvim-web-devicons',
             'cbochs/grapple.nvim', -- Optional, only needed for grapple picker
@@ -67,9 +66,6 @@ With lazy.nvim:
       end,
     }
 <
-
-Note: The `enabled = true` setting is important when using Lazy.nvim to ensure
-the extension loads correctly.
 
 ==============================================================================
 4. USAGE                                           *telescope-pretty-pickers-usage*
