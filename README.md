@@ -18,14 +18,21 @@ Install with your favorite package manager:
 
 ### Lazy
 
+When using Lazy.nvim, it's important to include `enabled = true` in your telescope-pretty-pickers config to ensure it loads correctly:
+
 ```lua
 return {
   'nvim-telescope/telescope.nvim',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'nvim-tree/nvim-web-devicons',
-    'cbochs/grapple.nvim',
-    'simeonoff/telescope-pretty-pickers.nvim',
+    {
+      'simeonoff/telescope-pretty-pickers.nvim',
+      enabled = true,  -- This is important to ensure the extension loads correctly
+      dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        'cbochs/grapple.nvim', -- Optional, only needed for grapple picker
+      },
+    },
   },
   config = function()
     local telescope = require('telescope')
@@ -40,6 +47,23 @@ return {
 }
 ```
 
+### Packer
+
+```lua
+use {
+  'nvim-telescope/telescope.nvim',
+  requires = {
+    'nvim-lua/plenary.nvim',
+    'nvim-tree/nvim-web-devicons',
+    'cbochs/grapple.nvim', -- Optional, only needed for grapple picker
+    'simeonoff/telescope-pretty-pickers.nvim',
+  },
+  config = function()
+    require('telescope').load_extension('pretty_pickers')
+  end
+}
+```
+
 ## Usage
 
 This extension enhances several common telescope pickers. Here's how to use them:
@@ -48,7 +72,7 @@ This extension enhances several common telescope pickers. Here's how to use them
 
 ```lua
 -- Find files with pretty formatting
-telescape.extensions.pretty_pickers.files({
+telescope.extensions.pretty_pickers.files({
   picker = 'find_files', -- Can be 'find_files', 'git_files', or 'oldfiles'
   options = { -- Standard telescope options
     prompt_title = 'Project Files',
@@ -61,7 +85,7 @@ telescape.extensions.pretty_pickers.files({
 
 ```lua
 -- Search with live_grep
-telescape.extensions.pretty_pickers.grep({
+telescope.extensions.pretty_pickers.grep({
   picker = 'live_grep', -- Can be 'live_grep' or 'grep_string'
   options = { -- Standard telescope options
     prompt_title = 'Search Text',
@@ -73,17 +97,17 @@ telescape.extensions.pretty_pickers.grep({
 
 ```lua
 -- Document symbols
-telescape.extensions.pretty_pickers.document_symbols({
+telescope.extensions.pretty_pickers.document_symbols({
   prompt_title = 'Document Symbols',
 })
 
 -- Workspace symbols
-telescape.extensions.pretty_pickers.workspace_symbols({
+telescope.extensions.pretty_pickers.workspace_symbols({
   prompt_title = 'Workspace Symbols',
 })
 
 -- LSP references
-telescape.extensions.pretty_pickers.lsp_references({
+telescope.extensions.pretty_pickers.lsp_references({
   prompt_title = 'LSP References',
 })
 ```
@@ -92,7 +116,7 @@ telescape.extensions.pretty_pickers.lsp_references({
 
 ```lua
 -- List buffers with pretty formatting
-telescape.extensions.pretty_pickers.buffers({
+telescope.extensions.pretty_pickers.buffers({
   prompt_title = 'Buffers',
 })
 ```
@@ -101,7 +125,7 @@ telescape.extensions.pretty_pickers.buffers({
 
 ```lua
 -- Pick from Grapple tags
-telescape.extensions.pretty_pickers.grapple({
+telescope.extensions.pretty_pickers.grapple({
   prompt_title = 'Grapple Tags',
 })
 ```
